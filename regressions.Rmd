@@ -1,0 +1,83 @@
+---
+title: "Regression"
+author: "Prabidhik KC"
+date: "2022-11-22"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+## loading the necessary libraries
+library(tidyverse)
+library(gov50data)
+```
+
+
+## Looking at the data
+```{r}
+health
+health <- health %>% 
+  drop_na()
+health %>% 
+  ggplot(aes(x = steps_lag, y = weight)) +
+  geom_point(color = "steelblue1") +
+  labs(x = "steps yesterday (in 1000s)",
+       y = "weight (in pounds")
+
+mean_wt_5ksteps <- health %>% 
+  filter(round(steps_lag) == 5) %>% 
+  summarize(mean(weight)) %>% 
+  pull()
+
+
+mean_wt_5ksteps
+
+```
+```{r}
+health %>% 
+  ggplot(aes(x = steps_lag, y = weight)) +
+  geom_point(color = "steelblue1") +
+  labs(x = "steps yesterday (in 1000s)",
+       y = "weight (in pounds") +
+  geom_vline(xintercept = c(4.5, 5.5), linetype = "dashed") +
+  geom_point(aes(x = 5, y = mean_wt_5ksteps), size = 3, color = "red")
+```
+```{r}
+health %>% 
+  ggplot(aes(x = steps_lag, y = weight)) +
+  geom_point(color = "steelblue1") +
+  labs(x = "steps yesterday (in 1000s)",
+       y = "weight (in pounds") +
+  stat_summary_bin(fun = "mean", geom = "point", size = 2, color = "red", binwidth = 0.5)
+```
+```{r}
+health %>% 
+  ggplot(aes(x = steps_lag, y = weight)) +
+  geom_point(color = "steelblue1") +
+  labs(x = "steps yesterday (in 1000s)",
+       y = "weight (in pounds") +
+  geom_smooth(method = "lm", se = FALSE, color = "red", size = 1.5) +
+  stat_summary_bin(fun = "mean", geom = "point", size = 2, color = "indianred1", binwidth = 0.5)
+```
+
+## Lienar Models 
+
+```{r}
+fit <- lm(weight ~ steps, data = health)
+fit
+```
+
+```{r}
+library(broom)
+augment(fit) %>% 
+  ggplot(aes(x = steps, y = .resid)) +
+  geom_point()
+```
+```{r}
+coef(fit)
+```
+
+The coefficient on steps is `r coef(fit)[2]`
