@@ -81,3 +81,40 @@ coef(fit)
 ```
 
 The coefficient on steps is `r coef(fit)[2]`
+
+```{r}
+augment(fit) %>% 
+  summarize(mean(.resid))
+```
+```{r}
+augment(fit) %>% 
+  summarize(mean(.resid))
+```
+
+```{r}
+library(gov50data)
+midterms
+```
+```{r}
+fit <- lm(seat_change ~ approval, data = midterms)
+fit
+fit_rdi <- lm(seat_change ~ rdi_change, data = midterms)
+fit_rdi
+
+summary(fit)$r.squared
+summary(fit_rdi)$r.squared
+
+glance(fit)
+glance(fit)$r.squared
+
+midterms %>% 
+  ggplot(aes(x = approval, y = seat_change)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red")
+
+midterms %>% 
+  ggplot(aes(x = rdi_change, y = seat_change)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red")
+```
+
