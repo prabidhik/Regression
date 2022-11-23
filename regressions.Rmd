@@ -118,3 +118,63 @@ midterms %>%
   geom_smooth(method = "lm", se = FALSE, color = "red")
 ```
 
+
+## Multiple regressions
+```{r}
+mult.fit <- lm(seat_change ~ approval + rdi_change, data = midterms)
+mult.fit
+
+midterms <- midterms %>% 
+  mutate(
+    noise = runif(nrow(midterms))
+  )
+midterms
+
+noise.fit <- lm(seat_change ~ approval + rdi_change + noise, data = midterms)
+
+fit
+mult.fit
+noise.fit
+
+glance(fit)
+glance(mult.fit)
+glance(noise.fit)
+```
+
+## Predicted values
+
+```{r}
+library(modelr)
+
+midterms %>% 
+  filter(year == 2022) %>% 
+  add_predictions(mult.fit)
+  
+```
+```{r}
+midterms %>% 
+  filter(year == 2022) %>% 
+  gather_predictions(fit, mult.fit, noise.fit)
+```
+
+```{r}
+data("progresa", package = "qss")
+
+cct <- as_tibble(progresa) %>% 
+  select(treatment, pri2000s, t2000)
+
+cct
+
+cct %>% 
+  group_by(treatment) %>% 
+  summarize(t2000 = mean(t2000)) %>% 
+  pivot_wider(names_from = treatment, values_from = t2000) %>% 
+  mutate(ATE = `1` - `0`)
+
+lm(pri2000s ~ treatment, data = cct)
+
+
+```
+
+
+
